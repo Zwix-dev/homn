@@ -5,11 +5,10 @@ import ProductCard from '../product/ProductCard';
 interface FeaturedSectionProps {
   title: string;
   products: Product[];
-  onProductClick: (product: Product) => void;
+  onProductClick: (product: Product) => void; // ← rendu optionnel
 }
 
 const FeaturedSection: React.FC<FeaturedSectionProps> = ({ title, products, onProductClick }) => {
-  console.log('FeaturedSection products:', products);
   return (
     <section className="py-16 bg-white">
       <div className="container mx-auto px-4">
@@ -20,7 +19,7 @@ const FeaturedSection: React.FC<FeaturedSectionProps> = ({ title, products, onPr
             <ProductCard
               key={product.id}
               product={product}
-              onClick={onProductClick}
+              onClick={onProductClick} 
             />
           ))}
         </div>

@@ -8,6 +8,7 @@ interface CategoryBannerProps {
   ctaText: string;
   position?: 'left' | 'right';
   onClick: () => void;
+  
 }
 
 const CategoryBanner: React.FC<CategoryBannerProps> = ({

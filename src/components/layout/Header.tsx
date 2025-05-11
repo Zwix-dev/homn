@@ -11,6 +11,7 @@ import Link from 'next/link';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '../ui/avatar';
 import { useRouter } from 'next/navigation';
+import { set } from 'better-auth';
 const { useSession } = createAuthClient()
 interface HeaderProps {
   setCurrentCategory: (category: Category) => void;
@@ -22,7 +23,6 @@ const Header: React.FC<HeaderProps> = ({ setCurrentCategory }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const { data: session } = useSession()
-  const router = useRouter();
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
@@ -34,8 +34,6 @@ const Header: React.FC<HeaderProps> = ({ setCurrentCategory }) => {
   const handleLogout = async () => {
     await authClient.signOut();
     window.location.href = "/";
-
-
   }
 
   const headerClasses = `fixed w-full z-20 transition-all duration-300 ${isScrolled ? 'bg-white shadow-md py-2' : 'bg-transparent py-4'
@@ -52,8 +50,9 @@ const Header: React.FC<HeaderProps> = ({ setCurrentCategory }) => {
   const handleCategoryClick = (category: Category) => {
     setCurrentCategory(category);
     setMobileMenuOpen(false);
+     console.log("header:",category)
   };
-
+ 
   return (
     <header className={headerClasses}>
       <div className="container mx-auto px-4">
