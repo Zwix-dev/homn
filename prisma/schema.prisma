@@ -81,10 +81,11 @@ model Product {
   price       Float
   image       String
   description String   @db.Text
-  sizes       Json
-  colors      Json
+  sizes       String[]
+  colors      String[]
   isFeatured  Boolean  @default(false)
   isNew      Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+

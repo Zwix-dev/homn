@@ -1,3 +1,4 @@
+import { db } from '@/lib/db';
 import { Product } from '../types';
 
 export const products: Product[] = [
@@ -47,6 +48,57 @@ export const products: Product[] = [
   },
   
 ];
+
+// export async function getProducts () {
+//   const products = await db.product.findMany({});
+//   return products
+// }
+     
+// export async function getProductsByCategory (category: string) {
+//   const products = await db.product.findMany({
+//     where: {
+//       category: category === 'all' ? undefined : category,
+//     },
+//   });
+//   return products
+// }
+
+// export async function getFeaturedProducts () {
+//   const products = await db.product.findMany({
+//     where: {
+//       isFeatured: true,
+//     },
+//   });
+//   return products
+// }
+// export async function getNewArrivals () {
+//   const products = await db.product.findMany({
+//     where: {
+//       isNew: true,
+//     },
+//   });
+//   return products.map(product => ({
+//     ...product,
+//     image: product.image,
+//     isFeatured: product.isFeatured,
+//     isNew: product.isNew,
+//     category: product.category,
+//     description: product.description,
+//     name: product.name,
+//     price: product.price,
+//     id: product.id,
+//     sizes: product.sizes,
+//     colors: product.colors,
+//   }));
+// }
+// export async function getProductById (id: number) {
+//   const product = await db.product.findUnique({
+//     where: {
+//       id: id,
+//     },
+//   });
+//   return product 
+// }
 
 export const getProductsByCategory = (category: string) => {
   if (category === 'all') return products;

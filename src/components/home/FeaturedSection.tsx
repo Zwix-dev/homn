@@ -9,6 +9,7 @@ interface FeaturedSectionProps {
 }
 
 const FeaturedSection: React.FC<FeaturedSectionProps> = ({ title, products, onProductClick }) => {
+  console.log('FeaturedSection products:', products);
   return (
     <section className="py-16 bg-white">
       <div className="container mx-auto px-4">

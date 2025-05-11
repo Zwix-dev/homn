@@ -10,6 +10,8 @@ export interface Product {
   colors: string[];
   isNew?: boolean;
   isFeatured?: boolean;
+  // createdAt : Date;
+  // updatedAt : Date;
 }
 
 export interface CartItem extends Product {
