@@ -45,6 +45,10 @@ export function LoginForm() {
             }, {
 
 
+                onError: (ctx) => {
+                    console.log(ctx.error.message);
+                }
+
 
             })
             if (!!response?.error) {
@@ -74,6 +78,7 @@ export function LoginForm() {
                         <Input
                             id="email"
                             type="email"
+                            name="email"
                             placeholder="exemple@email.com"
                             className="border-[#e6d7c3] focus-visible:ring-[#b38c3d]"
                         />
@@ -89,6 +94,7 @@ export function LoginForm() {
                         <div className="relative">
                             <Input
                                 id="password"
+                                name="password"
                                 type={showPassword ? "text" : "password"}
                                 placeholder="••••••••"
                                 className="border-[#e6d7c3] focus-visible:ring-[#b38c3d]"
@@ -122,7 +128,7 @@ export function LoginForm() {
 
                 <div className="mt-4 text-center text-sm">
                     Vous n&apos;avez pas de compte?{" "}
-                    <Link href="/register" className="text-[#b38c3d] hover:underline">
+                    <Link href="/auth/register" className="text-[#b38c3d] hover:underline">
                         S&apos;inscrire
                     </Link>
                 </div>

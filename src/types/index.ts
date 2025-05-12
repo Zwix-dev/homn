@@ -10,8 +10,8 @@ export interface Product {
   colors: string[];
   isNew?: boolean;
   isFeatured?: boolean;
-  // createdAt : Date;
-  // updatedAt : Date;
+  createdAt : Date;
+  updatedAt : Date;
 }
 
 export interface CartItem extends Product {
@@ -21,3 +21,13 @@ export interface CartItem extends Product {
 }
 
 export type Category = 'all' | 'ensemble' | 'pantalon' | 'chemise' | 'accessoires';
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  emailVerified: boolean;
+  image?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}

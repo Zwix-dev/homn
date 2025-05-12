@@ -33,7 +33,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
 
                 onClick={(e) => {
                   e.stopPropagation();
-                  console.log('Aperçu rapide cliqué');
                   onClick(product);
                 }}
               >

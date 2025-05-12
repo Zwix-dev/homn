@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { ShoppingBag, Menu, X, Search, User } from 'lucide-react';
 import { useCart } from '@/hooks/CartContext';
 import { Button } from '../ui/Button';
-import CartSidebar from '../cart/CartSidebar';
+
 import { Category } from '@/types';
 import { authClient } from "@/lib/auth-client";
 import { createAuthClient } from "better-auth/react"
@@ -12,12 +12,15 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Avatar, AvatarFallback } from '../ui/avatar';
 import { useRouter } from 'next/navigation';
 import { set } from 'better-auth';
+import { Product } from '@/types';
+import CartSidebar from '../cart/CartSidebar';
 const { useSession } = createAuthClient()
 interface HeaderProps {
   setCurrentCategory: (category: Category) => void;
+  cartItems?: Product[];
 }
 
-const Header: React.FC<HeaderProps> = ({ setCurrentCategory }) => {
+const Header: React.FC<HeaderProps> = ({ setCurrentCategory ,cartItems}) => {
   const { cartCount } = useCart();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -50,7 +53,6 @@ const Header: React.FC<HeaderProps> = ({ setCurrentCategory }) => {
   const handleCategoryClick = (category: Category) => {
     setCurrentCategory(category);
     setMobileMenuOpen(false);
-     console.log("header:",category)
   };
  
   return (
@@ -193,7 +195,7 @@ const Header: React.FC<HeaderProps> = ({ setCurrentCategory }) => {
       )}
 
       {/* Cart Sidebar */}
-      <CartSidebar isOpen={cartOpen} onClose={() => setCartOpen(false)} />
+      <CartSidebar isOpen={cartOpen} onClose={() => setCartOpen(false)}/>
     </header>
   );
 };

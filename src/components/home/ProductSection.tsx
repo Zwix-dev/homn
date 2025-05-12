@@ -12,7 +12,6 @@ interface Props {
 }
 
 const ProductSection: React.FC<Props> = ({ category, allProducts, onProductClick }) => {
-    console.log(onProductClick)
   const filtered = category === 'all'
     ? allProducts
     : allProducts.filter((p) => p.category === category);

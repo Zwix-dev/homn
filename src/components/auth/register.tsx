@@ -12,6 +12,8 @@ import { Checkbox } from "../ui/checkbox";
 export function RegisterForm() {
     const router = useRouter();
     const [error, setError] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
+    const [errorCode, setErrorCode] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
@@ -24,29 +26,37 @@ export function RegisterForm() {
             const formData = new FormData(event.currentTarget);
             const email = formData.get("email") as string;
             const password = formData.get("password") as string;
-            const name = formData.get("full-name") as string;
-
+            const name = formData.get("nom") as string + " " + formData.get("prenom") as string;
+            if (password !== formData.get("confirmPassword")) {
+                setErrorMessage("Les mots de passe ne correspondent pas");
+                setErrorCode("PASSWORD_MISMATCH");
+                return;
+            }
+            if(error ) {
+                
+                return;
+            }
             await authClient.signUp.email({
                 email,
                 password,
                 name,
                 callbackURL: "/"
             }, {
-                onRequest: (ctx) => {
-                    setIsLoading(true);
-                },
+
                 onSuccess: (ctx) => {
                     setIsLoading(false)
                     router.push("/")
                 },
                 onError: (ctx) => {
-                    setError(error);
+                    setIsLoading(false)
+                    setErrorMessage(ctx.error.message);
+                    setErrorCode(ctx.error.code);
+                   
                 },
             });
 
 
         } catch (e) {
-
             setIsLoading(false);
         }
     }
@@ -59,15 +69,15 @@ export function RegisterForm() {
             </div>
 
             <div className="rounded-lg border border-[#e6d7c3] bg-white p-6 shadow-sm">
-                <form className="space-y-4">
+                <form className="space-y-4" onSubmit={onSubmit}>
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <Label htmlFor="firstName">Prénom</Label>
-                            <Input id="firstName" placeholder="Jean" className="border-[#e6d7c3] focus-visible:ring-[#b38c3d]" />
+                            <Input id="firstName" name="nom" placeholder="Jean" className="border-[#e6d7c3] focus-visible:ring-[#b38c3d]" />
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="lastName">Nom</Label>
-                            <Input id="lastName" placeholder="Dupont" className="border-[#e6d7c3] focus-visible:ring-[#b38c3d]" />
+                            <Input id="lastName" name="prenom" placeholder="Dupont" className="border-[#e6d7c3] focus-visible:ring-[#b38c3d]" />
                         </div>
                     </div>
 
@@ -75,6 +85,7 @@ export function RegisterForm() {
                         <Label htmlFor="email">Email</Label>
                         <Input
                             id="email"
+                            name="email"
                             type="email"
                             placeholder="exemple@email.com"
                             className="border-[#e6d7c3] focus-visible:ring-[#b38c3d]"
@@ -87,14 +98,15 @@ export function RegisterForm() {
                             <Input
                                 id="password"
                                 type={showPassword ? "text" : "password"}
+                                name="password"
                                 placeholder="••••••••"
-                                className="border-[#e6d7c3] focus-visible:ring-[#b38c3d]"
+                                className={"border-[#e6d7c3] focus-visible:ring-[#b38c3d]" + (errorCode == "PASSWORD_TOO_SHORT" ? "border-4 border-red-500" : "")}
                             />
                             <Button
                                 type="button"
                                 variant="ghost"
                                 size="icon"
-                                className="absolute right-2 top-1/2 h-7 w-7 -translate-y-1/2 text-gray-500"
+                                className={"absolute right-2 top-1/2 h-7 w-7 -translate-y-1/2 text-gray-500"}
                                 onClick={() => setShowPassword(!showPassword)}
                             >
                                 {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -110,9 +122,10 @@ export function RegisterForm() {
                         <div className="relative">
                             <Input
                                 id="confirmPassword"
+                                name="confirmPassword"
                                 type={showConfirmPassword ? "text" : "password"}
                                 placeholder="••••••••"
-                                className="border-[#e6d7c3] focus-visible:ring-[#b38c3d]"
+                                className={"border-[#e6d7c3] focus-visible:ring-[#b38c3d]" + (errorCode == "PASSWORD_TOO_SHORT" ? "border-4 border-red-500" : "")}
                             />
                             <Button
                                 type="button"
@@ -126,6 +139,13 @@ export function RegisterForm() {
                                     {showConfirmPassword ? "Cacher le mot de passe" : "Afficher le mot de passe"}
                                 </span>
                             </Button>
+
+                            {errorMessage && (
+                                <p className="text-red-500 text-sm mt-1">
+                                    {errorMessage}
+                                </p>
+                            )}
+
                         </div>
                     </div>
 
@@ -144,7 +164,23 @@ export function RegisterForm() {
                     </div>
 
                     <Button type="submit" className="w-full bg-[#b38c3d] hover:bg-[#9a7834] text-white">
-                        S&apos;inscrire
+                        {isLoading ?
+                            (
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+
+                            ) :
+                            (
+                                <>
+                                    S&apos;inscrire
+
+                                </>
+
+                            )
+
+                        }
+
+
+
                     </Button>
                 </form>
 

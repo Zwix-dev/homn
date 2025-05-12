@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { X, MinusCircle, PlusCircle, ShoppingBag } from 'lucide-react';
 import { useCart } from '@/hooks/CartContext';
-import {Button} from '@/components/ui/Button';
+import { Button } from '@/components/ui/Button';;
+import getStripe from '@/utils/get-stripe';
 
 
 interface CartSidebarProps {
@@ -11,15 +12,55 @@ interface CartSidebarProps {
 
 const CartSidebar: React.FC<CartSidebarProps> = ({ isOpen, onClose }) => {
   const { cartItems, removeFromCart, updateQuantity, cartTotal } = useCart();
-  
-  if (!isOpen) return null;
+  const [isLoading, setIsLoading] = useState(false);
 
+  if (!isOpen) return null;
+  const handleCheckout = async () => {
+    setIsLoading(true);
+    const stripe = await getStripe();
+
+    const res = await fetch('/api/stripe/checkout_sessions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        items: cartItems.map((item) => ({
+          price_data: {
+            currency: 'eur',
+            product_data: {
+              name: item.name,
+              images: [item.image],
+            },
+            unit_amount: Math.round((item.salePrice || item.price) * 100),
+          },
+          quantity: item.quantity,
+        })),
+      }),
+    });
  
-  
+    if (!res.ok) {
+      console.error('Erreur lors de la création de la session Stripe');
+      setIsLoading(false);
+      return;
+    }
+
+    const { id } = await res.json();
+    const { error } = await stripe!.redirectToCheckout({ sessionId: id });
+
+    if (error) {
+      console.warn('Erreur Stripe:', error.message);
+    }
+
+    setIsLoading(false);
+  };
+
+
+
 
   return (
     <>
-      <div 
+      <div
         className="fixed inset-0 bg-black opacity-50 z-40 transition-opacity"
         onClick={onClose}
       />
@@ -27,7 +68,7 @@ const CartSidebar: React.FC<CartSidebarProps> = ({ isOpen, onClose }) => {
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold">Mon Panier</h2>
-            <button 
+            <button
               onClick={onClose}
               className="text-gray-500 hover:text-gray-700 transition-colors"
             >
@@ -47,9 +88,9 @@ const CartSidebar: React.FC<CartSidebarProps> = ({ isOpen, onClose }) => {
                 {cartItems.map((item) => (
                   <div key={`${item.id}-${item.selectedSize}-${item.selectedColor}`} className="flex border-b border-gray-200 pb-4">
                     <div className="w-20 h-24 rounded bg-gray-100 overflow-hidden mr-4 flex-shrink-0">
-                      <img 
-                        src={item.image} 
-                        alt={item.name} 
+                      <img
+                        src={item.image}
+                        alt={item.name}
                         className="w-full h-full object-cover"
                       />
                     </div>
@@ -60,14 +101,14 @@ const CartSidebar: React.FC<CartSidebarProps> = ({ isOpen, onClose }) => {
                       </p>
                       <div className="flex justify-between items-center mt-2">
                         <div className="flex items-center">
-                          <button 
+                          <button
                             onClick={() => updateQuantity(item.id, item.quantity - 1)}
                             className="text-gray-500 hover:text-blue-900 transition-colors"
                           >
                             <MinusCircle size={18} />
                           </button>
                           <span className="mx-2 w-6 text-center">{item.quantity}</span>
-                          <button 
+                          <button
                             onClick={() => updateQuantity(item.id, item.quantity + 1)}
                             className="text-gray-500 hover:text-blue-900 transition-colors"
                           >
@@ -86,7 +127,7 @@ const CartSidebar: React.FC<CartSidebarProps> = ({ isOpen, onClose }) => {
                         </div>
                       </div>
                     </div>
-                    <button 
+                    <button
                       onClick={() => removeFromCart(item.id)}
                       className="ml-2 text-gray-400 hover:text-red-500 transition-colors"
                     >
@@ -112,8 +153,9 @@ const CartSidebar: React.FC<CartSidebarProps> = ({ isOpen, onClose }) => {
               </div>
 
               <div className="space-y-3">
-                <Button size="lg">
-                  Réaliser le paiement
+                <Button size="lg" onClick={handleCheckout} >
+                  {isLoading ? 'Chargement...' : 'Procéder au paiement'}
+
                 </Button>
                 <Button variant="outline" onClick={onClose}>
                   Continuer vos achats
