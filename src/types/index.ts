@@ -22,7 +22,7 @@ export interface CartItem extends Product {
 
 export type Category = 'all' | 'ensemble' | 'pantalon' | 'chemise' | 'accessoires';
 
-export interface User {
+export interface UserInterface {
   id: string;
   name: string;
   email: string;
