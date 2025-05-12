@@ -7,10 +7,10 @@ import type { UserInterface } from "@/types"
 import { authClient } from "@/lib/auth-client"
 import PersonalInfo from "./Personnal-infos"
 import Orders from "./Orders"
-import Wishlist from "./wishlist"
+import Wishlist from "./Wishlist"
 import PaymentMethods from "./Payement-methods"
 import Addresses from "./Adresses"
-import Settings from "./settings"
+import Settings from "./Settings"
 
 const sidebarItems = [
   { id: "personal-info", name: "Informations personnelles", icon: User },
