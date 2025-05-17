@@ -13,4 +13,8 @@ export const auth = betterAuth({
         requireEmailVerification: false,
 
     },
+    allowedOrigins: [
+    "http://localhost:3000",       
+    "https://homn.vercel.app"    // pour la prod sur Vercel
+  ],
 });
