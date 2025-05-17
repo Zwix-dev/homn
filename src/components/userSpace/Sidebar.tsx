@@ -2,7 +2,7 @@
 import { User, ShoppingBag, Heart, CreditCard, MapPin, SettingsIcon, LogOut, ChevronRight, X } from "lucide-react"
 import type React from "react"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import type { UserInterface, Product } from "@/types"
 import { authClient } from "@/lib/auth-client"
 import PersonalInfo from "./Personnal-infos"
@@ -11,6 +11,7 @@ import Wishlist from "./Wishlist"
 import PaymentMethods from "./Payement-methods"
 import Addresses from "./Adresses"
 import Settings from "./Settings"
+import { auth } from "@/lib/auth"
 interface SidebarProps {
   wishlist: Product[];
 }
@@ -26,16 +27,23 @@ const sidebarItems = [
 export default function Sidebar({ wishlist }: SidebarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [activeSection, setActiveSection] = useState("personal-info")
-  console.log(wishlist)
   const { data: session, isPending, error, refetch } = authClient.useSession()
-
+  const [localUser, setLocalUser] = useState<UserInterface>(session?.user as UserInterface)
+  useEffect(() => {
+    if (session?.user) {
+      setLocalUser(session.user as UserInterface)
+    }
+  }, [session?.user])
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen)
   }
-
+  const handleLogout = async () => {
+    await authClient.signOut();
+    window.location.href = "/";
+  }
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
-    // Cette fonction sera implémentée dans les actions
+    setLocalUser((prev) => ({ ...prev, [name]: value }))
   }
 
   const renderContent = () => {
@@ -45,10 +53,10 @@ export default function Sidebar({ wishlist }: SidebarProps) {
       case "personal-info":
         return (
           <PersonalInfo
-            user={user}
+            user={localUser}
             handleInputChange={handleInputChange}
             updateUserData={async () => {
-              await authClient.updateUser(user)
+              await authClient.updateUser(localUser)
               refetch()
             }}
           />
@@ -68,10 +76,10 @@ export default function Sidebar({ wishlist }: SidebarProps) {
       default:
         return (
           <PersonalInfo
-            user={user}
+            user={localUser}
             handleInputChange={handleInputChange}
             updateUserData={async () => {
-              await authClient.updateUser(user)
+              await authClient.updateUser(localUser)
               refetch()
             }}
           />
@@ -110,7 +118,7 @@ export default function Sidebar({ wishlist }: SidebarProps) {
                 <ChevronRight className="h-4 w-4" />
               </button>
             ))}
-            <button className="flex items-center w-full px-4 py-3 mt-6 text-left text-red-600 hover:bg-red-50 rounded-lg">
+            <button onClick={handleLogout} className="flex items-center w-full px-4 py-3 mt-6 text-left text-red-600 hover:bg-red-50 rounded-lg">
               <LogOut className="mr-3 h-5 w-5" />
               <span className="flex-1">Déconnexion</span>
             </button>
@@ -152,7 +160,7 @@ export default function Sidebar({ wishlist }: SidebarProps) {
                     <ChevronRight className="h-4 w-4" />
                   </button>
                 ))}
-                <button className="flex items-center w-full px-4 py-3 mt-6 text-left text-red-600 hover:bg-red-50 rounded-lg">
+                <button onClick={handleLogout} className="flex items-center w-full px-4 py-3 mt-6 text-left text-red-600 hover:bg-red-50 rounded-lg">
                   <LogOut className="mr-3 h-5 w-5" />
                   <span className="flex-1">Déconnexion</span>
                 </button>

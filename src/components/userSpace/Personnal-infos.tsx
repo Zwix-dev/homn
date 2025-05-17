@@ -12,7 +12,6 @@ interface PersonalInfoProps {
 
 export default function PersonalInfo({ user, handleInputChange, updateUserData }: PersonalInfoProps) {
     const [isPending, startTransition] = useTransition()
-    const [localUser, setLocalUser] = useState<UserInterface | null>(user)
 
     const handleSubmit = async () => {
         try {
@@ -24,12 +23,6 @@ export default function PersonalInfo({ user, handleInputChange, updateUserData }
             toast("Une erreur est survenue lors de la mise à jour")
         }
     }
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target
-        setLocalUser((prev) => prev ? { ...prev, [name]: value } : prev)
-    }
-
     return (
         <div>
             <h2 className="text-2xl font-bold mb-6">Informations personnelles</h2>
@@ -40,8 +33,8 @@ export default function PersonalInfo({ user, handleInputChange, updateUserData }
                         <input
                             type="text"
                             name="name"
-                            value={localUser?.name || ""}
-                            onChange={handleChange}
+                            value={user?.name || ""}
+                            onChange={handleInputChange}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400"
                         />
                     </div>
@@ -50,8 +43,8 @@ export default function PersonalInfo({ user, handleInputChange, updateUserData }
                         <input
                             type="email"
                             name="email"
-                            value={localUser?.email || ""}
-                            onChange={handleChange}
+                            value={user?.email || ""}
+                            onChange={handleInputChange}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400"
                         />
                     </div>
