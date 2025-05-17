@@ -47,8 +47,7 @@ export default function Sidebar({ wishlist }: SidebarProps) {
   }
 
   const renderContent = () => {
-    const user = session?.user as UserInterface
-
+   
     switch (activeSection) {
       case "personal-info":
         return (
