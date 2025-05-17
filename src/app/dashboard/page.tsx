@@ -14,7 +14,6 @@ export default async function Page() {
   if (!userId) {
     return <div>Veuillez vous connecter.</div>;
   }
- 
   const wishlistProducts = await getWishlistProducts(userId);
 
   return (
