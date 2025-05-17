@@ -1,4 +1,3 @@
-// app/userSpace/page.tsx
 "use server"
 import React from 'react';
 import Sidebar from '@/components/userSpace/Sidebar';
@@ -6,7 +5,7 @@ import { getWishlistProducts } from '@/data/products';
 import { auth } from "@/lib/auth";
 import { headers } from 'next/headers';
 
-export async function Page() {
+export default async function Page() {
   const session = await auth.api.getSession({
     headers: await headers() 
   });
@@ -23,4 +22,3 @@ export async function Page() {
   );
 }
 
-export default Page;
