@@ -6,7 +6,7 @@ import { getWishlistProducts } from '@/data/products';
 import { auth } from "@/lib/auth";
 import { headers } from 'next/headers';
 
-export async function UserSpace() {
+export async function Page() {
   const session = await auth.api.getSession({
     headers: await headers() 
   });
@@ -23,4 +23,4 @@ export async function UserSpace() {
   );
 }
 
-export default UserSpace;
+export default Page;

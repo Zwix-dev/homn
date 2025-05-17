@@ -1,7 +1,7 @@
 "use client"
 import type { UserInterface } from "@/types"
 import type React from "react"
-import { useTransition } from "react"
+import { useState, useTransition } from "react"
 import { toast } from "sonner"
 
 interface PersonalInfoProps {
@@ -12,6 +12,7 @@ interface PersonalInfoProps {
 
 export default function PersonalInfo({ user, handleInputChange, updateUserData }: PersonalInfoProps) {
     const [isPending, startTransition] = useTransition()
+    const [localUser, setLocalUser] = useState<UserInterface | null>(user)
 
     const handleSubmit = async () => {
         try {
@@ -24,6 +25,11 @@ export default function PersonalInfo({ user, handleInputChange, updateUserData }
         }
     }
 
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target
+        setLocalUser((prev) => prev ? { ...prev, [name]: value } : prev)
+    }
+
     return (
         <div>
             <h2 className="text-2xl font-bold mb-6">Informations personnelles</h2>
@@ -34,8 +40,8 @@ export default function PersonalInfo({ user, handleInputChange, updateUserData }
                         <input
                             type="text"
                             name="name"
-                            value={user?.name || ""}
-                            onChange={handleInputChange}
+                            value={localUser?.name || ""}
+                            onChange={handleChange}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400"
                         />
                     </div>
@@ -44,8 +50,8 @@ export default function PersonalInfo({ user, handleInputChange, updateUserData }
                         <input
                             type="email"
                             name="email"
-                            value={user?.email || ""}
-                            onChange={handleInputChange}
+                            value={localUser?.email || ""}
+                            onChange={handleChange}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400"
                         />
                     </div>
