@@ -3,7 +3,7 @@ import { User, ShoppingBag, Heart, CreditCard, MapPin, SettingsIcon, LogOut, Che
 import type React from "react"
 
 import { useState } from "react"
-import type { UserInterface } from "@/types"
+import type { UserInterface, Product } from "@/types"
 import { authClient } from "@/lib/auth-client"
 import PersonalInfo from "./Personnal-infos"
 import Orders from "./Orders"
@@ -11,7 +11,9 @@ import Wishlist from "./Wishlist"
 import PaymentMethods from "./Payement-methods"
 import Addresses from "./Adresses"
 import Settings from "./Settings"
-
+interface SidebarProps {
+  wishlist: Product[];
+}
 const sidebarItems = [
   { id: "personal-info", name: "Informations personnelles", icon: User },
   { id: "orders", name: "Mes commandes", icon: ShoppingBag },
@@ -21,10 +23,10 @@ const sidebarItems = [
   { id: "settings", name: "Paramètres", icon: SettingsIcon },
 ]
 
-export default function Sidebar() {
+export default function Sidebar({ wishlist }: SidebarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [activeSection, setActiveSection] = useState("personal-info")
-
+  console.log(wishlist)
   const { data: session, isPending, error, refetch } = authClient.useSession()
 
   const toggleMobileMenu = () => {
@@ -54,7 +56,9 @@ export default function Sidebar() {
       case "orders":
         return <Orders />
       case "wishlist":
-        return <Wishlist />
+        if (session?.user) {
+          return <Wishlist products={wishlist} />
+        }
       case "payment-methods":
         return <PaymentMethods />
       case "addresses":
@@ -80,18 +84,25 @@ export default function Sidebar() {
       <div className="flex flex-1">
         {/* Sidebar for desktop */}
         <aside className="hidden md:flex flex-col w-64 bg-white border-r border-gray-200">
-          <div className="p-6">
-            <h2 className="text-lg font-medium text-gray-900">Mon compte</h2>
+          <div className="flex flex-col items-center justify-center p-6 ">
+            <div>
+
+              <img src="/icon.jpg" className="rounded-2xl w-20" alt="" />
+            </div>
+            <div className="p-6">
+              <h2 className="text-lg font-medium text-gray-900">Mon compte</h2>
+            </div>
+
           </div>
+
           <nav className="flex-1 space-y-1 px-4">
             {sidebarItems.map((item) => (
               <button
                 key={item.id}
-                className={`flex items-center w-full px-4 py-3 text-left rounded-lg ${
-                  activeSection === item.id
-                    ? "bg-gray-100 text-gray-900"
-                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                }`}
+                className={`flex items-center w-full px-4 py-3 text-left rounded-lg ${activeSection === item.id
+                  ? "bg-[#b38c3d] text-white"
+                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                  }`}
                 onClick={() => setActiveSection(item.id)}
               >
                 <item.icon className="mr-3 h-5 w-5" />
@@ -127,11 +138,10 @@ export default function Sidebar() {
                 {sidebarItems.map((item) => (
                   <button
                     key={item.id}
-                    className={`flex items-center w-full px-4 py-3 text-left rounded-lg ${
-                      activeSection === item.id
-                        ? "bg-gray-100 text-gray-900"
-                        : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                    }`}
+                    className={`flex items-center w-full px-4 py-3 text-left rounded-lg ${activeSection === item.id
+                      ? "bg-gray-100 text-gray-900"
+                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                      }`}
                     onClick={() => {
                       setActiveSection(item.id)
                       setMobileMenuOpen(false)

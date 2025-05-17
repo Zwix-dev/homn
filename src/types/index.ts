@@ -31,3 +31,11 @@ export interface UserInterface {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface WishlistProduct {
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  userId: string;
+  productId: string;
+}

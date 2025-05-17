@@ -100,19 +100,17 @@ export async function getProductById (id: number) {
   return product 
 }
 
-// export const getProductsByCategory = (category: string) => {
-//   if (category === 'all') return products;
-//   return products.filter(product => product.category === category);
-// };
 
-// export const getFeaturedProducts = () => {
-//   return products.filter(product => product.isFeatured);
-// };
 
-// export const getNewArrivals = () => {
-//   return products.filter(product => product.isNew);
-// };
+export async function getWishlistProducts(userId: string) {
+  const wishlist = await db.wishlist.findMany({
+    where: { userId },
+    include: {
+      product: true, // jointure avec la table Product
+    },
+  });
 
-// export const getProductById = (id: number) => {
-//   return products.find(product => product.id === id);
-// };
+  // Très important : on retourne uniquement les produits
+  return wishlist.map((item) => item.product);
+}
+

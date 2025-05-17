@@ -101,7 +101,7 @@ const Header: React.FC<HeaderProps> = ({ setCurrentCategory ,cartItems}) => {
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem>
-                    <Link href="/settings" className="w-full">
+                    <Link href="/dashboard" className="w-full">
                       Settings
                     </Link>
                   </DropdownMenuItem>
