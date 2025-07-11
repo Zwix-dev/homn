@@ -25,6 +25,7 @@ const CartSidebar: React.FC<CartSidebarProps> = ({ isOpen, onClose }) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        customer_email: "arthur.duval18@gmail.com",
         items: cartItems.map((item) => ({
           price_data: {
             currency: 'eur',
@@ -32,9 +33,10 @@ const CartSidebar: React.FC<CartSidebarProps> = ({ isOpen, onClose }) => {
               name: item.name,
               images: [item.image],
             },
-            unit_amount: Math.round((item.salePrice || item.price) * 100),
+            unit_amount: Math.round((item.price || item.price) * 100),
           },
           quantity: item.quantity,
+          
         })),
       }),
     });
@@ -117,9 +119,9 @@ const CartSidebar: React.FC<CartSidebarProps> = ({ isOpen, onClose }) => {
                         </div>
                         <div className="text-right">
                           <p className="font-medium text-gray-900">
-                            €{((item.salePrice || item.price) * item.quantity).toFixed(2)}
+                            €{((item.price || item.price) * item.quantity).toFixed(2)}
                           </p>
-                          {item.salePrice && (
+                          {item.price && (
                             <p className="text-sm line-through text-gray-500">
                               €{(item.price * item.quantity).toFixed(2)}
                             </p>

@@ -1,77 +1,179 @@
-export default function Orders() {
+"use client";
+
+import { useState } from "react";
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Order } from "@/types";
+import { Package, MapPin } from "lucide-react";
+
+interface OrdersProps {
+  orders: Order[];
+}
+
+export default function Orders({ orders }: OrdersProps) {
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+
+  const formatDate = (date: Date) =>
+    new Intl.DateTimeFormat("fr-FR", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(new Date(date));
+
+  const formatPrice = (price: number) =>
+    new Intl.NumberFormat("fr-FR", {
+      style: "currency",
+      currency: "EUR",
+    }).format(price);
+
+  const getStatusColor = (status: string) => {
+    switch (status.toLowerCase()) {
+      case "pending":
+        return "bg-yellow-100 text-yellow-800";
+      case "confirmed":
+        return "bg-blue-100 text-blue-800";
+      case "shipped":
+        return "bg-purple-100 text-purple-800";
+      case "delivered":
+        return "bg-green-100 text-green-800";
+      case "cancelled":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
+
   return (
-    <div>
+    <>
       <h2 className="text-2xl font-bold mb-6">Mes commandes</h2>
-      <div className="bg-white shadow rounded-lg overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Commande
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Statut
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Total
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              <tr>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#ORD-2023-1234</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">15/04/2023</td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                    Livré
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">149,99 €</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <a href="#" className="text-gray-900 hover:underline">
-                    Voir les détails
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#ORD-2023-1189</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">02/03/2023</td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                    Livré
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">89,99 €</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <a href="#" className="text-gray-900 hover:underline">
-                    Voir les détails
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#ORD-2023-1023</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">15/01/2023</td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                    Livré
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">219,98 €</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <a href="#" className="text-gray-900 hover:underline">
-                    Voir les détails
-                  </a>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+
+      {orders.length === 0 ? (
+        <div className="bg-white shadow rounded-lg p-8 text-center">
+          <Package className="mx-auto h-12 w-12 text-gray-400" />
+          <h3 className="mt-2 text-sm font-medium text-gray-900">Aucune commande</h3>
+          <p className="mt-1 text-sm text-gray-500">Vous n'avez pas encore passé de commande.</p>
         </div>
-      </div>
-    </div>
-  )
+      ) : (
+        <div className="bg-white shadow rounded-lg overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Commande</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Statut</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Articles</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {orders.map((order) => (
+                  <tr key={order.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#{order.id}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{formatDate(order.createdAt)}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(order.status)}`}>
+                        {order.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {order.orderItems.length} article{order.orderItems.length > 1 ? "s" : ""}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {formatPrice(order.totalPrice)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <button
+                            onClick={() => setSelectedOrder(order)}
+                            className="text-[#b38c3d] hover:text-[#9a7635] hover:underline font-medium"
+                          >
+                            Voir les détails
+                          </button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-4xl">
+                          {selectedOrder && (
+                            <DialogHeader>
+                              <DialogTitle>Détails de la commande #{selectedOrder.id}</DialogTitle>
+                              <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-4">
+                                  <div className="bg-gray-50 p-4 rounded-lg">
+                                    <h4 className="font-medium text-gray-900 mb-3 flex items-center">
+                                      <Package className="h-5 w-5 mr-2" />
+                                      Informations de la commande
+                                    </h4>
+                                    <div className="text-sm space-y-2">
+                                      <div className="flex justify-between">
+                                        <span className="text-gray-500">Date:</span>
+                                        <span>{formatDate(selectedOrder.createdAt)}</span>
+                                      </div>
+                                      <div className="flex justify-between">
+                                        <span className="text-gray-500">Statut:</span>
+                                        <span className={`px-2 py-1 rounded-full text-xs font-semibold ${getStatusColor(selectedOrder.status)}`}>
+                                          {selectedOrder.status}
+                                        </span>
+                                      </div>
+                                      <div className="flex justify-between">
+                                        <span className="text-gray-500">Total:</span>
+                                        <span className="font-bold text-lg">{formatPrice(selectedOrder.totalPrice)}</span>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <div className="bg-gray-50 p-4 rounded-lg">
+                                    <h4 className="font-medium text-gray-900 mb-3 flex items-center">
+                                      <MapPin className="h-5 w-5 mr-2" />
+                                      Adresse de livraison
+                                    </h4>
+                                    <div className="text-sm text-gray-600">
+                                      <p>{selectedOrder.shippingAddress.street}</p>
+                                      <p>{selectedOrder.shippingAddress.city}, {selectedOrder.shippingAddress.state}</p>
+                                      <p>{selectedOrder.shippingAddress.zipCode}</p>
+                                      <p>{selectedOrder.shippingAddress.country}</p>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div>
+                                  <h4 className="font-medium text-gray-900 mb-3">Articles commandés</h4>
+                                  <div className="space-y-3 max-h-96 overflow-y-auto">
+                                    {selectedOrder.orderItems.map((item) => (
+                                      <div key={item.id} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                                        <img
+                                          src={item.product.image}
+                                          alt={item.product.name}
+                                          className="w-16 h-16 object-cover rounded-md"
+                                        />
+                                        <div className="flex-1 min-w-0">
+                                          <p className="text-sm font-medium text-gray-900 truncate">
+                                            {item.product.name}
+                                          </p>
+                                          <p className="text-sm text-gray-500">Quantité: {item.quantity}</p>
+                                          <p className="text-sm text-gray-500">Prix unitaire: {formatPrice(item.price)}</p>
+                                        </div>
+                                        <div className="text-sm font-medium text-gray-900">
+                                          {formatPrice(item.price * item.quantity)}
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+                            </DialogHeader>
+                          )}
+                        </DialogContent>
+                      </Dialog>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+    </>
+  );
 }

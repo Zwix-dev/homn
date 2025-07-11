@@ -1,16 +1,30 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-// If your Prisma file is located elsewhere, you can change the path
+import { admin } from "better-auth/plugins"
 import { PrismaClient } from "@prisma/client";
- 
+
 const prisma = new PrismaClient();
 export const auth = betterAuth({
     database: prismaAdapter(prisma, {
         provider: "postgresql", // or "mysql", "postgresql", ...etc
     }),
-    emailAndPassword: {  
+    emailAndPassword: {
         enabled: true,
         requireEmailVerification: false,
-
     },
+    user: {
+        changeEmail: {
+            enabled: true,
+            // sendChangeEmailVerification: async ({ user, newEmail, url, token }, request) => {
+            //     await sendEmail({
+            //         to: user.email, // verification email must be sent to the current user email to approve the change
+            //         subject: 'Approve email change',
+            //         text: `Click the link to approve the change: ${url}`
+            //     })
+            // }
+        }
+    },
+    plugins: [
+        admin()
+    ]
 });

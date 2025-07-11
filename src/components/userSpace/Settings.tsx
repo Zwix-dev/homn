@@ -2,6 +2,9 @@ export default function Settings() {
   return (
     <div>
       <h2 className="text-2xl font-bold mb-6">Paramètres</h2>
+      <p className="text-red-600 mb-4">Features not avaibles for this moment.</p>
+      
+      {/* Settings Form */}
       <div className="bg-white shadow rounded-lg p-6">
         <div className="space-y-6">
           <div>

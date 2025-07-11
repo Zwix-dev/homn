@@ -46,7 +46,7 @@ export function LoginForm() {
 
 
                 onError: (ctx) => {
-                    console.log(ctx.error.message);
+                    
                 }
 
 

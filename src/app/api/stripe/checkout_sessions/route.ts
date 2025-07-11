@@ -1,14 +1,13 @@
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
-// Initialize Stripe with your secret key
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2022-08-01', 
 });
 
 export async function POST(request: Request) {
   try {
-    const { items } = await request.json();
+    const { customer_email,items } = await request.json();
 
     if (!items || items.length === 0) {
       return NextResponse.json(
@@ -31,6 +30,7 @@ export async function POST(request: Request) {
         quantity: item.quantity,
       })),
       mode: 'payment',
+      customer_email,
       success_url: `${process.env.NEXT_PUBLIC_APP_URL}/success`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/cancel`,
     });

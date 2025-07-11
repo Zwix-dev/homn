@@ -46,35 +46,50 @@ import { Product } from '../types';
 //     colors: ["Brown", "Black", "Tan"],
 //     isNew: true
 //   },
-  
+
 // ];
 
-export async function getProducts () {
-  const products = await db.product.findMany({});
-  return products
-}
-     
-export async function getProductsByCategory (category: string) {
+export async function getProducts() {
   const products = await db.product.findMany({
-    where: {
-      category: category === 'all' ? undefined : category,
-    },
+    include: { category: true },
   });
   return products
 }
 
-export async function getFeaturedProducts () {
+export async function getProductsByCategory(categoryValue: string) {
+  const products = await db.product.findMany({
+    where: categoryValue === 'all' ? {} : {
+      category: {
+        value: categoryValue
+      }
+    },
+    include: {
+      category: true, // pour précharger la catégorie avec chaque produit si besoin
+    }
+  });
+
+  return products;
+}
+
+
+export async function getFeaturedProducts() {
   const products = await db.product.findMany({
     where: {
       isFeatured: true,
     },
+    include: {
+      category: true,  // inclut la catégorie liée pour chaque produit
+    },
   });
   return products
 }
-export async function getNewArrivals () {
+export async function getNewArrivals() {
   const products = await db.product.findMany({
     where: {
       isNew: true,
+    },
+    include: {
+      category: true,  // inclut la catégorie liée pour chaque produit
     },
   });
   return products.map(product => ({
@@ -91,22 +106,38 @@ export async function getNewArrivals () {
     colors: product.colors,
   }));
 }
-export async function getProductById (id: number) {
+export async function getProductById(id: number) {
   const product = await db.product.findUnique({
     where: {
       id: id,
     },
+    include: {
+      category: true,  // inclut la catégorie liée pour chaque produit
+    },
   });
-  return product 
+  return product
 }
 
+export async function getAllCategories() {
+  const categories = await db.category.findMany({
+    orderBy: {
+      name: 'asc', // Tri par nom de catégorie
+    },
+  });
+  return categories;
+}
 
 
 export async function getWishlistProducts(userId: string) {
   const wishlist = await db.wishlist.findMany({
     where: { userId },
     include: {
-      product: true, // jointure avec la table Product
+      product: {
+        include: {
+          category: true, // inclut la catégorie liée pour chaque produit
+        },
+      }, 
+
     },
   });
 
@@ -114,3 +145,30 @@ export async function getWishlistProducts(userId: string) {
   return wishlist.map((item) => item.product);
 }
 
+export async function addToWishlist(userId: string, productId: number) {
+  const existingItem = await db.wishlist.findFirst({
+    where: {
+      userId,
+      productId,
+    },
+  });
+
+  if (existingItem) {
+    return null; // L'élément est déjà dans la liste de souhaits
+  }
+
+  const newItem = await db.wishlist.create({
+    data: {
+      userId,
+      productId,
+    },
+  });
+
+  return newItem;
+}
+export async function removeFromWishlist(productId: number, userId: string) {
+
+
+
+
+}

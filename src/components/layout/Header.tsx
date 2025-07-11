@@ -6,7 +6,7 @@ import { Button } from '../ui/Button';
 
 import { Category } from '@/types';
 import { authClient } from "@/lib/auth-client";
-import { createAuthClient } from "better-auth/react"
+
 import Link from 'next/link';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '../ui/avatar';
@@ -14,13 +14,14 @@ import { useRouter } from 'next/navigation';
 import { set } from 'better-auth';
 import { Product } from '@/types';
 import CartSidebar from '../cart/CartSidebar';
+import { createAuthClient } from "better-auth/react"
 const { useSession } = createAuthClient()
 interface HeaderProps {
   setCurrentCategory: (category: Category) => void;
   cartItems?: Product[];
 }
 
-const Header: React.FC<HeaderProps> = ({ setCurrentCategory ,cartItems}) => {
+const Header: React.FC<HeaderProps> = ({ setCurrentCategory, cartItems }) => {
   const { cartCount } = useCart();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -42,26 +43,26 @@ const Header: React.FC<HeaderProps> = ({ setCurrentCategory ,cartItems}) => {
   const headerClasses = `fixed w-full z-20 transition-all duration-300 ${isScrolled ? 'bg-white shadow-md py-2' : 'bg-transparent py-4'
     }`;
 
-  const categories: { name: string; value: Category }[] = [
-    { name: 'Tout nos produits', value: 'all' },
-    { name: 'Ensemble', value: 'ensemble' },
-    { name: 'Pantalon', value: 'pantalon' },
-    { name: 'Chemise', value: 'chemise' },
-    { name: 'Accessoires', value: 'accessoires' }
+  const categories: Category[] = [
+    { id: 0, name: 'Tout nos produits', value: 'all' },
+    { id: 1, name: 'Ensemble', value: 'ensemble' },
+    { id: 2, name: 'Pantalon', value: 'pantalon' },
+    { id: 3, name: 'Chemise', value: 'chemise' },
+    { id: 4, name: 'Accessoires', value: 'accessoires' }
   ];
 
   const handleCategoryClick = (category: Category) => {
     setCurrentCategory(category);
     setMobileMenuOpen(false);
   };
- 
+
   return (
     <header className={headerClasses}>
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <a href="#" className="text-2xl font-bold text-gray-900" onClick={() => handleCategoryClick('all')}>
+            <a href="#" className="text-2xl font-bold text-gray-900" onClick={() => handleCategoryClick(categories[0])}>
               HOMN
             </a>
           </div>
@@ -73,7 +74,7 @@ const Header: React.FC<HeaderProps> = ({ setCurrentCategory ,cartItems}) => {
                 key={category.value}
                 href="#"
                 className="text-gray-700 hover:text-blue-900 transition-colors font-medium"
-                onClick={() => handleCategoryClick(category.value)}
+                onClick={() => handleCategoryClick(category)}
               >
                 {category.name}
               </a>
@@ -82,13 +83,13 @@ const Header: React.FC<HeaderProps> = ({ setCurrentCategory ,cartItems}) => {
 
           {/* Desktop Icons */}
           <div className="hidden md:flex items-center space-x-6">
-            <button className="text-gray-700 hover:text-blue-900">
+            <button className="text-gray-700 hover:text-blue-900 cursor-pointer">
               <Search size={20} />
             </button>
             {session?.user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="rounded-full p-0 h-10 w-10">
+                  <Button variant="ghost" className="rounded-full p-0 h-10 w-10 cursor-pointer">
                     <Avatar>
                       <AvatarFallback className="bg-purple-100 text-purple-700">{session.user.name.charAt(0)}</AvatarFallback>
                     </Avatar>
@@ -120,7 +121,7 @@ const Header: React.FC<HeaderProps> = ({ setCurrentCategory ,cartItems}) => {
               <>
                 <Link href="/auth/login">
                   <button
-                    className="text-gray-700 hover:text-blue-900 relative mt-1">
+                    className="text-gray-700 hover:text-blue-900 relative mt-1 cursor-pointer">
                     <User size={20} />
                   </button>
                 </Link>
@@ -129,7 +130,7 @@ const Header: React.FC<HeaderProps> = ({ setCurrentCategory ,cartItems}) => {
 
 
             <button
-              className="text-gray-700 hover:text-blue-900 relative"
+              className="text-gray-700 hover:text-blue-900 relative cursor-pointer"
               onClick={() => setCartOpen(true)}
             >
               <ShoppingBag size={20} />
@@ -174,7 +175,7 @@ const Header: React.FC<HeaderProps> = ({ setCurrentCategory ,cartItems}) => {
                   key={category.value}
                   href="#"
                   className="text-gray-700 hover:text-blue-900 py-2 transition-colors font-medium"
-                  onClick={() => handleCategoryClick(category.value)}
+                  onClick={() => handleCategoryClick(category)}
                 >
                   {category.name}
                 </a>
@@ -195,7 +196,7 @@ const Header: React.FC<HeaderProps> = ({ setCurrentCategory ,cartItems}) => {
       )}
 
       {/* Cart Sidebar */}
-      <CartSidebar isOpen={cartOpen} onClose={() => setCartOpen(false)}/>
+      <CartSidebar isOpen={cartOpen} onClose={() => setCartOpen(false)} />
     </header>
   );
 };

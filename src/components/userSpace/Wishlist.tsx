@@ -1,15 +1,34 @@
+"use client"
+
 import { X } from "lucide-react"
-import { getWishlistProducts } from "@/data/products"
-import type { Product, WishlistProduct } from "@/types"
+import type { Product } from "@/types"
+import { useTransition } from "react"
+import { deleteWishlistItem } from "@/action/wishlist"
+import { toast } from "sonner"
 
 interface WishlistProps {
-  products: Product[];
+  products: Product[]
+  userId: string
 }
 
-export default function Wishlist({ products }: WishlistProps) {
- 
+export default function Wishlist({ products, userId }: WishlistProps) {
+  const [isPending, startTransition] = useTransition()
+
   if (!products || products.length === 0) {
-    return <p>Votre liste de souhaits est vide.</p>
+    return <h1 className="text-2xl text-center font-bold">Votre liste de souhaits est vide.</h1>
+  }
+
+  const handleDelete = (id: number) => {
+    startTransition(() => {
+      deleteWishlistItem(id, userId)
+        .then(() => {
+          toast("Produit supprimé de la liste de souhaits")
+        })
+        .catch((error) => {
+          toast("Erreur lors de la suppression du produit")
+          console.error(error)
+        })
+    })
   }
 
   return (
@@ -19,7 +38,6 @@ export default function Wishlist({ products }: WishlistProps) {
         {products.map((product: Product) => (
           <div key={product.id} className="bg-white rounded-lg shadow overflow-hidden">
             <div className="h-48 bg-gray-200">
-              {/* Image si elle existe */}
               {product.image && (
                 <img
                   src={product.image}
@@ -35,7 +53,11 @@ export default function Wishlist({ products }: WishlistProps) {
                 <button className="flex-1 bg-gray-900 text-white py-2 rounded-md hover:bg-gray-800">
                   Ajouter au panier
                 </button>
-                <button className="p-2 text-gray-400 hover:text-red-500">
+                <button
+                  className="p-2 text-gray-400 hover:text-red-500"
+                  onClick={() => handleDelete(product.id)}
+                  disabled={isPending}
+                >
                   <X size={20} />
                 </button>
               </div>

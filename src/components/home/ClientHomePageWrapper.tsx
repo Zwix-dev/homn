@@ -15,23 +15,27 @@ interface ClientHomeWrapperProps {
     allProducts: Product[];
     featuredProducts: Product[];
     newArrivals: Product[];
+    categories?: Category[];
+    favourites?: Product[];
 }
 
 const ClientHomeWrapper: React.FC<ClientHomeWrapperProps> = ({
     allProducts,
     featuredProducts,
     newArrivals,
+    categories = [],
+    favourites = [],
 }) => {
-    const [currentCategory, setCurrentCategory] = useState<Category>('all');
-
-
-    const filteredProducts = useMemo(() => {
-        if (currentCategory === 'all') return allProducts;
-        return allProducts.filter((product) => product.category === currentCategory);
-    }, [currentCategory, allProducts]);
-
-
+    const [currentCategory, setCurrentCategory] = useState<Category | undefined>(
+        categories.find(c => c.value === 'all')
+    );
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+
+    const isFav = useMemo(() => {
+        if (!selectedProduct) return false;
+        return favourites.some(fav => fav.id === selectedProduct.id);
+    }, [selectedProduct, favourites]);
+   
 
     return (
         <div className="min-h-screen flex flex-col">
@@ -56,14 +60,22 @@ const ClientHomeWrapper: React.FC<ClientHomeWrapperProps> = ({
                             subtitle="Découvrez tout nos ensembles"
                             image="https://static.parisfashionshops.com/paris/images/homme/zayne-paris/ensembles/pro_858446cb24e9d369f299f25d770c/ensemble-texture-chemise-avec-short_bleu_67b64d400e426.jpg"
                             ctaText="Trouver mon ensemble"
-                            onClick={() => setCurrentCategory('ensemble')} />
+
+                            onClick={() => {
+                                const cat = categories.find(c => c.name.toLowerCase() === 'ensemble');
+                                if (cat) setCurrentCategory(cat);
+                            }}
+                        />
 
                         <CategoryBanner
                             title="Essentielle"
                             subtitle="Rehaussez votre style de tous les jours avec notre collection variée de chemises."
                             image="https://static.parisfashionshops.com/paris/images/homme/yves-enzo/chemises/pro_3e26793c9195fbce3826fae6f7df/chemisette-carreaux-tartan-coupe-confort_damier_67e146140d137.jpg"
                             ctaText="Visiter la boutique chemise"
-                            onClick={() => setCurrentCategory('chemise')}
+                            onClick={() => {
+                                const cat = categories.find(c => c.name.toLowerCase() === 'ensemble');
+                                if (cat) setCurrentCategory(cat);
+                            }}
                             position="right"
                         />
                     </div>
@@ -72,7 +84,9 @@ const ClientHomeWrapper: React.FC<ClientHomeWrapperProps> = ({
                 <ProductSection
                     category={currentCategory}
                     allProducts={allProducts}
+                    favourites={favourites}
                     onProductClick={setSelectedProduct}
+
                 />
                 <FeaturedSection
                     title="Produits En Vedette"
@@ -85,7 +99,7 @@ const ClientHomeWrapper: React.FC<ClientHomeWrapperProps> = ({
 
             <Footer />
             <ProductDetailClientWrapper product={selectedProduct}
-                onClose={() => setSelectedProduct(null)} />
+                onClose={() => setSelectedProduct(null)} isFav={isFav}  />
         </div>
     );
 };
