@@ -10,7 +10,6 @@ const Hero: React.FC = () => {
           alt="Hero"
           className="w-full h-full object-cover opacity-60"
           fetchPriority="high"
-          
         />
       </div>
       
