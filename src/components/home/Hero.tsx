@@ -9,6 +9,7 @@ const Hero: React.FC = () => {
           src="https://images.pexels.com/photos/1342609/pexels-photo-1342609.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
           alt="Hero"
           className="w-full h-full object-cover opacity-60"
+          fetchPriority="high"
         />
       </div>
       
