@@ -8,17 +8,24 @@ import { headers } from "next/headers";
 
 
 export default async function HomePage() {
-const session = await auth.api.getSession({
+  const session = await auth.api.getSession({
     headers: await headers(),
   });
-  const featuredProducts = await getFeaturedProducts();
-  const newArrivals = await getNewArrivals();
-  const allProducts = await getProductsByCategory('all');
-  const categories = await getAllCategories();
-  const cartItems = session?.user.id ? await getCardProducts(session.user.id) : [];
-  const favourites = session?.user.id ? await getWishlistProducts(session?.user.id): [];
-
-
+  const [
+    featuredProducts,
+    newArrivals,
+    allProducts,
+    categories,
+    cartItems,
+    favourites
+  ] = await Promise.all([
+    getFeaturedProducts(),
+    getNewArrivals(),
+    getProductsByCategory('all'),
+    getAllCategories(),
+    session?.user.id ? getCardProducts(session.user.id) : Promise.resolve([]),
+    session?.user.id ? getWishlistProducts(session.user.id) : Promise.resolve([])
+  ]);
   return (
     <ClientHomeWrapper
       featuredProducts={featuredProducts}

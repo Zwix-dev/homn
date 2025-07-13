@@ -2,6 +2,7 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { admin } from "better-auth/plugins"
 import { PrismaClient } from "@prisma/client";
+import { sendResetPassLink } from "./resend";
 
 const prisma = new PrismaClient();
 export const auth = betterAuth({
@@ -11,6 +12,11 @@ export const auth = betterAuth({
     emailAndPassword: {
         enabled: true,
         requireEmailVerification: false,
+        sendResetPassword: async ({ user, url, token }, request) => {
+            // Vous avez déjà l'URL finale dans la variable `url` !
+            // Ou si votre fonction a besoin du token, utilisez `token`.
+            await sendResetPassLink(user.email, token);
+        },
     },
     user: {
         changeEmail: {
