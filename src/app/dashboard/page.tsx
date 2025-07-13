@@ -8,21 +8,30 @@ import { getOrders } from '@/data/order';
 
 export default async function Page() {
   const session = await auth.api.getSession({
-    headers: await headers() 
+    headers: await headers()
   });
 
-  const userId = session?.user?.id;  
+  const userId = session?.user?.id;
   if (!userId) {
     return <div>Veuillez vous connecter.</div>;
   }
-  const wishlistProducts = await getWishlistProducts(userId);
-  const orderHistory = await getOrders(userId);
-  const allProducts = await getProducts();
-  const categories = await getAllCategories();
 
+  const [
+    wishlistProducts,
+    orderHistory,
+    allProducts,
+    categories,
+
+  ] = await Promise.all([
+    getWishlistProducts(userId),
+    getOrders(userId),
+    getProducts(),
+    getAllCategories(),
+    session?.user.id ? getWishlistProducts(session.user.id) : Promise.resolve([])
+  ]);
 
   return (
-    <Sidebar wishlist={wishlistProducts} orderHistory={orderHistory} productsPage={allProducts} categories={categories}/>
+    <Sidebar wishlist={wishlistProducts} orderHistory={orderHistory} productsPage={allProducts} categories={categories} />
   );
 }
 
