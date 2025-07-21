@@ -2,12 +2,12 @@ import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2022-08-01', 
+  apiVersion: '2022-08-01',
 });
 
 export async function POST(request: Request) {
   try {
-    const { customer_email,items } = await request.json();
+    const { customer_email, items } = await request.json();
 
     if (!items || items.length === 0) {
       return NextResponse.json(
@@ -31,16 +31,16 @@ export async function POST(request: Request) {
       })),
       mode: 'payment',
       customer_email,
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/success`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/cancel`,
-    });
+      success_url: `${request.headers.get("origin")}/order?success=true`,
+      cancel_url: `${request.headers.get("origin")}/order?canceled=true`, // Redirection 
+      });
 
-    return NextResponse.json({ id: session.id });
-  } catch (error) {
-    console.error('Error creating Stripe checkout session:', error);
-    return NextResponse.json(
-      { error: 'Server error while creating session' },
-      { status: 500 }
-    );
+      return NextResponse.json({ id: session.id });
+    } catch (error) {
+      console.error('Error creating Stripe checkout session:', error);
+      return NextResponse.json(
+        { error: 'Server error while creating session' },
+        { status: 500 }
+      );
+    }
   }
-}

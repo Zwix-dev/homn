@@ -1,110 +1,70 @@
-import React from 'react';
-import ContactModal from "../ContactModal";
-import { Mail, Instagram, Facebook, Twitter } from 'lucide-react';
+import type React from "react"
+import Link from "next/link"
+import Image from "next/image"
+import { FacebookIcon, InstagramIcon, TwitterIcon } from "lucide-react"
 
-const Footer: React.FC = () => {
+const Footer: React.FC = () => 
+{
   return (
-    <footer className="bg-gray-900 text-white pt-16 pb-8">
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Company Info */}
-          <div>
-            <h3 className="text-xl font-bold mb-4">HOMN</h3>
-            <p className="text-gray-300 mb-4">
-              Votre nouveau dressing en ligne !
-            </p>
-            <div className="flex space-x-4">
-              <a href="#" className="text-gray-300 hover:text-white transition-colors">
-                <Instagram size={20} />
-              </a>
-              <a href="#" className="text-gray-300 hover:text-white transition-colors">
-                <Facebook size={20} />
-              </a>
-              <a href="#" className="text-gray-300 hover:text-white transition-colors">
-                <Twitter size={20} />
-              </a>
-            </div>
-          </div>
-          
-          {/* Shop */}
-          <div>
-            <h4 className="text-lg font-semibold mb-4">Magasin</h4>
-            <ul className="space-y-2">
-              <li>
-                <a href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Nouveaux Arrivages
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Produits En Vedette
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Tout Nos Produits
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Cartes Cadeau
-                </a>
-              </li>
-            </ul>
-          </div>
-          
-          {/* Support */}
-          <div>
-            <h4 className="text-lg font-semibold mb-4">Support</h4>
-            <ul className="space-y-2">
-              <li>
-               <ContactModal />
-              </li>
-              <li>
-                <a href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Livraison Et Retour
-                </a>
-              </li>
-            </ul>
-          </div>
-          
-          {/* Newsletter */}
-          <div>
-            <h4 className="text-lg font-semibold mb-4">Rejoins Notre Newsletter</h4>
-            <p className="text-gray-300 mb-4">
-              Abonnez-vous pour recevoir des mises à jour sur les nouveautés, les offres spéciales et les conseils de style.
-            </p>
-            <form className="flex">
-              <input
-                type="email"
-                placeholder="Votre e-mail"
-                className="bg-gray-800 text-white px-4 py-2 rounded-l focus:outline-none w-full"
-              />
-              <button
-                
-                className="bg-blue-900 hover:bg-blue-800 text-white px-4 py-2 rounded-r transition-colors"
-              >
-                <Mail size={20} />
-              </button>
-            </form>
+    <footer className="bg-belles-femmes-maroon text-belles-femmes-text-light py-8 px-6">
+      <div className="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="space-y-4">
+          <Link href="/" className="flex items-center gap-2">
+            <Image
+              src="/icon.jpg"
+              alt="Belles Femmes Logo"
+              width={100}
+              height={100}
+              className="h-10 w-auto object-contain"
+            />
+          </Link>
+          <p className="text-sm">
+            Votre destination pour des vêtements femme grande taille élégants et confortables.
+          </p>
+          <div className="flex gap-4">
+            <Link href="#" className="text-belles-femmes-text-light hover:text-belles-femmes-pink">
+              <FacebookIcon className="h-6 w-6" />
+            </Link>
+            <Link href="#" className="text-belles-femmes-text-light hover:text-belles-femmes-pink">
+              <InstagramIcon className="h-6 w-6" />
+            </Link>
+            <Link href="#" className="text-belles-femmes-text-light hover:text-belles-femmes-pink">
+              <TwitterIcon className="h-6 w-6" />
+            </Link>
           </div>
         </div>
-        
-        <div className="mt-12 pt-8 border-t border-gray-800 text-gray-400 text-sm flex flex-col md:flex-row justify-between items-center">
-          <p>&copy; {new Date().getFullYear()} HOMN. Tous droits réservés.</p>
-          <div className="flex space-x-6 mt-4 md:mt-0">
-            <a href="#" className="hover:text-white transition-colors">
-              Politique De Confidentialité
-            </a>
-            <a href="#" className="hover:text-white transition-colors">
-              Conditions D'utilisation
-            </a>
-          </div>
+        <div className="space-y-2">
+          <h3 className="text-lg font-semibold mb-2">Navigation</h3>
+          <ul className="space-y-1">
+            <li><Link href="#" className="hover:text-belles-femmes-pink">Accueil</Link></li>
+            <li><Link href="#" className="hover:text-belles-femmes-pink">Boutique</Link></li>
+            <li><Link href="#" className="hover:text-belles-femmes-pink">Nouveautés</Link></li>
+            <li><Link href="#" className="hover:text-belles-femmes-pink">Promotions</Link></li>
+          </ul>
         </div>
+        <div className="space-y-2">
+          <h3 className="text-lg font-semibold mb-2">Aide & Contact</h3>
+          <ul className="space-y-1">
+            <li><Link href="#" className="hover:text-belles-femmes-pink">FAQ</Link></li>
+            <li><Link href="#" className="hover:text-belles-femmes-pink">Livraison</Link></li>
+            <li><Link href="#" className="hover:text-belles-femmes-pink">Retours</Link></li>
+            <li><Link href="#" className="hover:text-belles-femmes-pink">Contactez-nous</Link></li>
+          </ul>
+        </div>
+        <div className="space-y-2">
+          <h3 className="text-lg font-semibold mb-2">Informations Légales</h3>
+          <ul className="space-y-1">
+            <li><Link href="#" className="hover:text-belles-femmes-pink">Mentions Légales</Link></li>
+            <li><Link href="#" className="hover:text-belles-femmes-pink">Politique de Confidentialité</Link></li>
+            <li><Link href="#" className="hover:text-belles-femmes-pink">Conditions Générales de Vente</Link></li>
+          </ul>
+        </div>
+      </div>
+      <div className="border-t border-belles-femmes-pink pt-6 mt-8 text-center text-sm">
+        <p>&copy; {new Date().getFullYear()} Belles Femmes. Tous droits réservés.</p>
       </div>
     </footer>
   );
 };
-
 
 export default Footer;

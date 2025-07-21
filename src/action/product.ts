@@ -153,3 +153,83 @@ export async function addProductToWishlist(productId: number, userId: string) {
         return { success: false, error: error instanceof Error ? error.message : "Erreur inconnue" };
     }
 }
+
+export async function updateProduct(productId: number, formData: FormData) {
+    try {
+        console.log(productId, formData)
+        const file = formData.get('file') as File;
+        const categoryData = formData.get('category') as string;
+        let imageUrl: string | undefined;
+
+        // Parse l'objet category depuis JSON
+        let category;
+        try {
+            category = JSON.parse(categoryData);
+        } catch {
+            throw new Error("Format de catégorie invalide.");
+        }
+
+        const productData = {
+            name: formData.get('name') as string,
+            category: category, // Maintenant c'est un objet
+            price: parseFloat(formData.get('price') as string),
+            description: formData.get('description') as string,
+            sizes: formData.get('sizes') as string,
+            colors: formData.get('colors') as string,
+            isFeatured: formData.get('isFeatured') === 'true',
+            isNew: formData.get('isNew') === 'true',
+        };
+
+        if (file && file.size > 0) {
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                throw new Error("Le fichier doit être une image.");
+            }
+
+        }
+        if (file && file.size > 0) {
+            imageUrl = await uploadProductImage(file, productId);
+        }
+
+        if (!productData.category) {
+            throw new Error("Catégorie manquante ou invalide.");
+        }
+        const categoryId = parseInt(productData.category, 10);
+
+        const categoryExists = await db.category.findUnique({
+            where: { id: categoryId }
+        });
+
+        if (!categoryExists) {
+            throw new Error("La catégorie spécifiée n'existe pas.");
+        }
+
+        // Update product in database
+        const updatedProduct = await db.product.update({
+            where: { id: productId },
+            data: {
+                name: productData.name,
+                category: {
+                    connect: { id: categoryId }
+                },
+                price: productData.price,
+                image: imageUrl,
+                description: productData.description,
+                sizes: productData.sizes ? productData.sizes.split(",").map(s => s.trim()) : [],
+                colors: productData.colors ? productData.colors.split(",").map(c => c.trim()) : [],
+                isFeatured: productData.isFeatured,
+                isNew: productData.isNew,
+            }
+        });
+
+        revalidatePath('/admin/products'); // Adjust path as needed
+        return { success: true, updatedProduct };
+
+    } catch (error) {
+        console.error("Erreur lors de la mise à jour du produit:", error);
+        return {
+            success: false,
+            error: error instanceof Error ? error.message : "Erreur inconnue"
+        };
+    }
+}

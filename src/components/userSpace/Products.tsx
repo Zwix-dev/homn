@@ -20,7 +20,7 @@ import { Plus, Edit, Trash2 } from "lucide-react"
 import type { Category, Product } from "@/types"
 import { FileDropZone } from "../ui/filedropzone"
 import { productSchema } from "@/schemas/schemas"
-import { addProductWithImage, uploadProductImage } from "@/action/product"
+import { addProductWithImage, updateProduct, uploadProductImage } from "@/action/product"
 
 
 interface ProductPageProps {
@@ -33,9 +33,11 @@ export default function ProductsPage({ productsPa, categories }: ProductPageProp
     const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
     const [formErrors, setFormErrors] = useState<Record<string, string>>({})
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+    const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
     const [newProduct, setNewProduct] = useState({
         name: "",
-        category: "" ,
+        category: "",
         price: "",
         image: "",
         description: "",
@@ -119,13 +121,108 @@ export default function ProductsPage({ productsPa, categories }: ProductPageProp
         }
     }
 
-
-
-        const handleDeleteProduct = (id: number) => {
-            if (confirm("Êtes-vous sûr de vouloir supprimer ce produit ?")) {
-                setProducts(products.filter((p) => p.id !== id))
-            }
+    const handleDeleteProduct = (id: number) => {
+        if (confirm("Êtes-vous sûr de vouloir supprimer ce produit ?")) {
+            setProducts(products.filter((p) => p.id !== id))
         }
+    }
+
+    const handleEditProduct = async () => {
+        if (!selectedProduct) return;
+
+        const result = productSchema.safeParse(newProduct);
+
+        if (!result.success) {
+            const fieldErrors: Record<string, string> = {};
+            result.error.errors.forEach((err) => {
+                const field = err.path[0];
+                if (typeof field === "string") {
+                    fieldErrors[field] = err.message;
+                }
+            });
+            setFormErrors(fieldErrors);
+            return;
+        }
+
+        try {
+            const formData = new FormData();
+            if (selectedFile) {
+                formData.append('file', selectedFile);
+            }
+            formData.append('name', newProduct.name);
+            formData.append('category', JSON.stringify(newProduct.category));
+            formData.append('price', newProduct.price);
+            formData.append('description', newProduct.description);
+            formData.append('sizes', newProduct.sizes || '');
+            formData.append('colors', newProduct.colors || '');
+            formData.append('isFeatured', newProduct.isFeatured.toString());
+            formData.append('isNew', newProduct.isNew.toString());
+
+            // Remplacez ceci par votre fonction de mise à jour réelle
+            if (selectedProduct) {
+                const result = updateProduct(selectedProduct.id, formData);
+
+                setIsEditDialogOpen(false);
+                setSelectedFile(null);
+                setNewProduct({
+                    name: "",
+                    category: "",
+                    price: "",
+                    image: "",
+                    description: "",
+                    sizes: "",
+                    colors: "",
+                    isFeatured: false,
+                    isNew: false,
+                });
+                console.log("Produit mis à jour avec succès:", result);
+
+            }
+
+            // Simulation de mise à jour
+            // const updatedProduct = {
+            //     ...selectedProduct,
+            //     name: newProduct.name,
+            //     category: categories?.find(c => c.id.toString() === newProduct.category) || selectedProduct.category,
+            //     price: parseFloat(newProduct.price),
+            //     image: selectedFile ? URL.createObjectURL(selectedFile) : selectedProduct.image,
+            //     description: newProduct.description,
+            //     sizes: newProduct.sizes ? newProduct.sizes.split(',').map(s => s.trim()) : [],
+            //     colors: newProduct.colors ? newProduct.colors.split(',').map(c => c.trim()) : [],
+            //     isFeatured: newProduct.isFeatured,
+            //     isNew: newProduct.isNew,
+            // };
+
+
+            // setProducts((prev) =>
+            //     prev.map((p) => (p.id === selectedProduct.id ? updatedProduct : p))
+            // );
+
+        } catch (error) {
+            console.error("Erreur:", error);
+            setFormErrors((prev) => ({ ...prev, general: "Erreur lors de la modification du produit." }));
+        }
+    }
+        const openEditDialog = (product: Product) => {
+            setSelectedProduct(product);
+            setNewProduct({
+                name: product.name,
+                category: product.category.id.toString(),
+                price: product.price.toString(),
+                image: product.image,
+                description: product.description || "",
+                sizes: product.sizes?.join(", ") || "",
+                colors: product.colors?.join(", ") || "",
+                isFeatured: product.isFeatured,
+                isNew: product.isNew,
+            });
+            setSelectedFile(null);
+            setFormErrors({});
+            setIsEditDialogOpen(true);
+        };
+
+
+
 
         return (
             <div className="container mx-auto p-6">
@@ -355,7 +452,7 @@ export default function ProductsPage({ productsPa, categories }: ProductPageProp
                                 </div>
 
                                 <div className="flex gap-2">
-                                    <Button variant="outline" size="sm" className="flex-1">
+                                    <Button variant="outline" size="sm" className="flex-1" onClick={() => openEditDialog(product)}>
                                         <Edit className="h-4 w-4 mr-1" />
                                         Modifier
                                     </Button>
@@ -374,6 +471,151 @@ export default function ProductsPage({ productsPa, categories }: ProductPageProp
                         <p className="text-gray-400 text-sm mt-2">Commencez par ajouter votre premier produit</p>
                     </div>
                 )}
+                <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+                    <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                        <DialogHeader>
+                            <DialogTitle>Modifier le produit</DialogTitle>
+                            <DialogDescription>Modifiez les informations du produit ci-dessous</DialogDescription>
+                        </DialogHeader>
+
+                        <div className="grid gap-4 py-4">
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="edit-name">Nom du produit *</Label>
+                                    <Input
+                                        id="edit-name"
+                                        value={newProduct.name}
+                                        onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
+                                        placeholder="Ex: T-shirt Premium"
+                                        className={formErrors.name ? "border-red-500 focus-visible:ring-red-500" : ""}
+                                        required
+                                    />
+                                    {formErrors.name && <p className="text-xs text-red-500">{formErrors.name}</p>}
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="edit-category">Catégorie</Label>
+                                    <Select
+                                        value={newProduct.category}
+
+                                        onValueChange={(value) => setNewProduct({ ...newProduct, category: value })}
+                                    >
+                                        <SelectTrigger className={formErrors.category ? "border-red-500 focus-visible:ring-red-500" : ""}>
+                                            <SelectValue placeholder="Sélectionner une catégorie" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {categories
+                                                ?.filter((category) => category.name !== 'all')
+                                                .map((category) => (
+                                                    <SelectItem key={category.id} value={category.id.toString()}>
+                                                        {category.value}
+                                                    </SelectItem>
+                                                ))}
+                                        </SelectContent>
+                                    </Select>
+                                    {formErrors.category && <p className="text-xs text-red-500">{formErrors.category}</p>}
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="edit-price">Prix (€) *</Label>
+                                <Input
+                                    id="edit-price"
+                                    type="number"
+                                    step="0.01"
+                                    min="0"
+                                    value={newProduct.price}
+                                    onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
+                                    placeholder="29.99"
+                                    className={formErrors.price ? "border-red-500 focus-visible:ring-red-500" : ""}
+                                    required
+                                />
+                                {formErrors.price && <p className="text-xs text-red-500">{formErrors.price}</p>}
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="edit-description">Description</Label>
+                                <Textarea
+                                    id="edit-description"
+                                    value={newProduct.description}
+                                    onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
+                                    placeholder="Description détaillée du produit..."
+                                    rows={3}
+                                />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="edit-sizes">Tailles (séparées par des virgules)</Label>
+                                    <Input
+                                        id="edit-sizes"
+                                        value={newProduct.sizes}
+                                        onChange={(e) => setNewProduct({ ...newProduct, sizes: e.target.value })}
+                                        placeholder="S, M, L, XL"
+                                        className={formErrors.sizes ? "border-red-500 focus-visible:ring-red-500" : ""}
+                                    />
+                                    {formErrors.sizes && <p className="text-xs text-red-500">{formErrors.sizes}</p>}
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="edit-colors">Couleurs (séparées par des virgules)</Label>
+                                    <Input
+                                        id="edit-colors"
+                                        value={newProduct.colors}
+                                        onChange={(e) => setNewProduct({ ...newProduct, colors: e.target.value })}
+                                        placeholder="Noir, Blanc, Bleu"
+                                        className={formErrors.colors ? "border-red-500 focus-visible:ring-red-500" : ""}
+                                    />
+                                    {formErrors.colors && <p className="text-xs text-red-500">{formErrors.colors}</p>}
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <Card className={formErrors.image ? "border-red-500 focus-visible:ring-red-500" : ""}>
+                                    <CardHeader>
+                                        <CardTitle>Image</CardTitle>
+                                        {/* <CardDescription>
+                                        {newProduct.image ? `Image actuelle: ${newProduct.image}` : "Taille maximale :"}
+                                    </CardDescription> */}
+                                    <img src={newProduct.image || "/icon.jpg"} width={200} className="rounded-sm" />
+                                    </CardHeader>
+                                    <CardContent>
+                                        <FileDropZone
+                                            accept="image/*"
+                                            maxSize={5 * 1024 * 1024} // 5MB
+                                            onFilesSelected={handleFilesSelected}
+                                        />
+                                    </CardContent>
+                                </Card>
+                                {formErrors.image && <p className="text-xs text-red-500">{formErrors.image}</p>}
+                            </div>
+                            <div className="flex gap-6">
+                                <div className="flex items-center space-x-2">
+                                    <Switch
+                                        id="edit-featured"
+                                        checked={newProduct.isFeatured}
+                                        onCheckedChange={(checked) => setNewProduct({ ...newProduct, isFeatured: checked })}
+                                    />
+                                    <Label htmlFor="edit-featured">Produit vedette</Label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                    <Switch
+                                        id="edit-new"
+                                        checked={newProduct.isNew}
+                                        onCheckedChange={(checked) => setNewProduct({ ...newProduct, isNew: checked })}
+                                    />
+                                    <Label htmlFor="edit-new">Nouveau produit</Label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="flex justify-end gap-2">
+                            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+                                Annuler
+                            </Button>
+                            <Button onClick={handleEditProduct}>Modifier le produit</Button>
+                        </div>
+                    </DialogContent>
+                </Dialog>
             </div>
         )
     }

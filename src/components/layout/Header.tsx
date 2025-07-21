@@ -62,8 +62,8 @@ const Header: React.FC<HeaderProps> = ({ setCurrentCategory, cartItems }) => {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <a href="#" className="text-2xl font-bold text-gray-900" onClick={() => handleCategoryClick(categories[0])}>
-              HOMN
+            <a href="#" className="text-2xl font-serif italic font-bold text-rose-900" onClick={() => handleCategoryClick(categories[0])}>
+              Belles Femmes
             </a>
           </div>
 
@@ -73,7 +73,7 @@ const Header: React.FC<HeaderProps> = ({ setCurrentCategory, cartItems }) => {
               <a
                 key={category.value}
                 href="#"
-                className="text-gray-700 hover:text-blue-900 transition-colors font-medium"
+                className="text-rose-800 hover:text-rose-900 transition-colors font-medium"
                 onClick={() => handleCategoryClick(category)}
               >
                 {category.name}
@@ -83,7 +83,7 @@ const Header: React.FC<HeaderProps> = ({ setCurrentCategory, cartItems }) => {
 
           {/* Desktop Icons */}
           <div className="hidden md:flex items-center space-x-6">
-            <button className="text-gray-700 hover:text-blue-900 cursor-pointer">
+            <button className="text-rose-700 hover:text-rose-900 cursor-pointer">
               <Search size={20} />
             </button>
             {session?.user ? (
@@ -91,7 +91,7 @@ const Header: React.FC<HeaderProps> = ({ setCurrentCategory, cartItems }) => {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="rounded-full p-0 h-10 w-10 cursor-pointer">
                     <Avatar>
-                      <AvatarFallback className="bg-purple-100 text-purple-700">{session.user.name.charAt(0)}</AvatarFallback>
+                      <AvatarFallback className="bg-rose-100 text-rose-700">{session.user.name.charAt(0)}</AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
@@ -121,7 +121,7 @@ const Header: React.FC<HeaderProps> = ({ setCurrentCategory, cartItems }) => {
               <>
                 <Link href="/auth/login">
                   <button
-                    className="text-gray-700 hover:text-blue-900 relative mt-1 cursor-pointer">
+                    className="text-rose-700 hover:text-rose-900 relative mt-1 cursor-pointer">
                     <User size={20} />
                   </button>
                 </Link>
@@ -130,12 +130,12 @@ const Header: React.FC<HeaderProps> = ({ setCurrentCategory, cartItems }) => {
 
 
             <button
-              className="text-gray-700 hover:text-blue-900 relative cursor-pointer"
+              className="text-rose-700 hover:text-rose-900 relative cursor-pointer"
               onClick={() => setCartOpen(true)}
             >
               <ShoppingBag size={20} />
               {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-blue-900 text-white text-xs flex items-center justify-center">
+                <span className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-rose-900 text-white text-xs flex items-center justify-center">
                   {cartCount}
                 </span>
               )}
@@ -145,18 +145,18 @@ const Header: React.FC<HeaderProps> = ({ setCurrentCategory, cartItems }) => {
           {/* Mobile Menu Button */}
           <div className="flex md:hidden items-center space-x-4">
             <button
-              className="text-gray-700 hover:text-blue-900 relative"
+              className="text-rose-700 hover:text-rose-900 relative"
               onClick={() => setCartOpen(true)}
             >
               <ShoppingBag size={20} />
               {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-blue-900 text-white text-xs flex items-center justify-center">
+                <span className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-rose-900 text-white text-xs flex items-center justify-center">
                   {cartCount}
                 </span>
               )}
             </button>
             <button
-              className="text-gray-700 hover:text-blue-900"
+              className="text-rose-700 hover:text-rose-900"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -174,18 +174,18 @@ const Header: React.FC<HeaderProps> = ({ setCurrentCategory, cartItems }) => {
                 <a
                   key={category.value}
                   href="#"
-                  className="text-gray-700 hover:text-blue-900 py-2 transition-colors font-medium"
+                  className="text-rose-700 hover:text-rose-900 py-2 transition-colors font-medium"
                   onClick={() => handleCategoryClick(category)}
                 >
                   {category.name}
                 </a>
               ))}
-              <div className="pt-4 border-t border-gray-200 flex items-center space-x-4">
-                <Button variant="outline" size="sm">
+              <div className="pt-4 border-t border-rose-200 flex items-center space-x-4">
+                <Button variant="outline" size="sm" className="border-rose-300 text-rose-700 hover:bg-rose-50">
                   <Search size={16} className="mr-2" />
                   Recherche
                 </Button>
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" className="border-rose-300 text-rose-700 hover:bg-rose-50">
                   <User size={16} className="mr-2" />
                   Compte
                 </Button>

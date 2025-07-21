@@ -52,32 +52,31 @@ const ClientHomeWrapper: React.FC<ClientHomeWrapperProps> = ({
                         />)
                 }
 
-
-                <section className="py-16 bg-gray-50">
+                <section className="py-16 bg-rose-50">
                     <div className="container mx-auto px-4 space-y-8">
                         <CategoryBanner
-                            title="Les Ensembles"
-                            subtitle="Découvrez tout nos ensembles"
-                            image="https://static.parisfashionshops.com/paris/images/homme/zayne-paris/ensembles/pro_858446cb24e9d369f299f25d770c/ensemble-texture-chemise-avec-short_bleu_67b64d400e426.jpg"
-                            ctaText="Trouver mon ensemble"
-
-                            onClick={() => {
-                                const cat = categories.find(c => c.name.toLowerCase() === 'ensemble');
-                                if (cat) setCurrentCategory(cat);
-                            }}
-                        />
-
-                        <CategoryBanner
-                            title="Essentielle"
-                            subtitle="Rehaussez votre style de tous les jours avec notre collection variée de chemises."
-                            image="https://static.parisfashionshops.com/paris/images/homme/yves-enzo/chemises/pro_3e26793c9195fbce3826fae6f7df/chemisette-carreaux-tartan-coupe-confort_damier_67e146140d137.jpg"
-                            ctaText="Visiter la boutique chemise"
+                            title="Belles Femmes"
+                            subtitle="Sentez vous belle avec nos vêtements tendance."
+                            image="hero2.jpg"
+                            ctaText="Découvrir nos ensembles"
                             onClick={() => {
                                 const cat = categories.find(c => c.name.toLowerCase() === 'ensemble');
                                 if (cat) setCurrentCategory(cat);
                             }}
                             position="right"
                         />
+
+                        {/* <CategoryBanner
+                            title="Les petites Gazelles"
+                            subtitle="Explorer notre seconde marque pour les femmes."
+                            image="hero3.jpg"
+                            ctaText="Découvrir nos collections"
+                            onClick={() => {
+                                const cat = categories.find(c => c.name.toLowerCase() === 'chemise');
+                                if (cat) setCurrentCategory(cat);
+                            }}
+                            position="right"
+                        /> */}
                     </div>
                 </section>
 
@@ -86,8 +85,8 @@ const ClientHomeWrapper: React.FC<ClientHomeWrapperProps> = ({
                     allProducts={allProducts}
                     favourites={favourites}
                     onProductClick={setSelectedProduct}
-
                 />
+                
                 <FeaturedSection
                     title="Produits En Vedette"
                     products={featuredProducts}
@@ -98,8 +97,11 @@ const ClientHomeWrapper: React.FC<ClientHomeWrapperProps> = ({
             </main>
 
             <Footer />
-            <ProductDetailClientWrapper product={selectedProduct}
-                onClose={() => setSelectedProduct(null)} isFav={isFav}  />
+            <ProductDetailClientWrapper 
+                product={selectedProduct}
+                onClose={() => setSelectedProduct(null)} 
+                isFav={isFav}  
+            />
         </div>
     );
 };

@@ -134,7 +134,7 @@ export default function Sidebar({ wishlist, orderHistory,productsPage,categories
               <button
                 key={item.id}
                 className={`flex items-center w-full px-4 py-3 text-left rounded-lg ${activeSection === item.id
-                  ? "bg-[#b38c3d] text-white"
+                  ? "bg-button text-white"
                   : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                   }`}
                 onClick={() => setActiveSection(item.id)}
@@ -151,7 +151,7 @@ export default function Sidebar({ wishlist, orderHistory,productsPage,categories
                 <button
 
                   className={`flex items-center w-full px-4 py-3 text-left rounded-lg ${activeSection === "produts"
-                    ? "bg-[#b38c3d] text-white"
+                    ? "bg-button text-white"
                     : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                     }`}
                   onClick={() => setActiveSection("produts")}

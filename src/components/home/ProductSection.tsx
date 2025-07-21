@@ -20,6 +20,8 @@ const ProductSection: React.FC<Props> = ({ category, allProducts, onProductClick
   return (
     <section className="py-16 bg-white">
       <div className="container mx-auto px-4">
+
+       
         <h2 className="text-3xl font-bold text-gray-900 mb-2">
           {!category || category.name === 'all'
             ? 'Tous nos produits'

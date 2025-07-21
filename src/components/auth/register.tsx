@@ -9,15 +9,15 @@ import { Eye, EyeOff, Loader2 } from "lucide-react"
 import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
 import { Checkbox } from "../ui/checkbox";
+
 export function RegisterForm() {
     const router = useRouter();
     const [error, setError] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const [errorCode, setErrorCode] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    const [showPassword, setShowPassword] = useState(false)
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     async function onSubmit(event: { preventDefault: () => void; currentTarget: HTMLFormElement | undefined; }) {
         event.preventDefault();
@@ -32,52 +32,48 @@ export function RegisterForm() {
                 setErrorCode("PASSWORD_MISMATCH");
                 return;
             }
-            if(error ) {
-                
-                return;
-            }
+            if (error) return;
+
             await authClient.signUp.email({
                 email,
                 password,
                 name,
                 callbackURL: "/"
             }, {
-
-                onSuccess: (ctx) => {
-                    setIsLoading(false)
-                    router.push("/")
+                onSuccess: () => {
+                    setIsLoading(false);
+                    router.push("/");
                 },
                 onError: (ctx) => {
-                    setIsLoading(false)
+                    setIsLoading(false);
                     setErrorMessage(ctx.error.message);
                     setErrorCode(ctx.error.code);
-                   
                 },
             });
-
 
         } catch (e) {
             setIsLoading(false);
         }
     }
+
     return (
         <div className="w-full space-y-8">
             <div className="flex flex-col items-center space-y-2">
-                <img src="/icon.jpg" alt="HOMN Logo" width={120} height={40} className="mb-2" />
-                <h1 className="text-2xl font-semibold text-[#b38c3d]">Créer un compte</h1>
-                <p className="text-center text-sm text-gray-600">Inscrivez-vous pour accéder à toutes nos fonctionnalités</p>
+                {/* <a href="/"><img src="/icon.jpg" alt="Logo" width={120} height={40} className="mb-2 rounded-sm opacity-85" /></a> */}
+                <h1 className="text-2xl font-semibold text-rose-900">Créer un compte</h1>
+                <p className="text-center text-sm text-black">Inscrivez-vous pour accéder à toutes nos fonctionnalités</p>
             </div>
 
-            <div className="rounded-lg border border-[#e6d7c3] bg-white p-6 shadow-sm">
+            <div className="rounded-lg border border-[#EAD5D0] bg-white p-6 shadow-sm">
                 <form className="space-y-4" onSubmit={onSubmit}>
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <Label htmlFor="firstName">Prénom</Label>
-                            <Input id="firstName" name="nom" placeholder="Jean" className="border-[#e6d7c3] focus-visible:ring-[#b38c3d]" />
+                            <Input id="firstName" name="nom" placeholder="Jean"  />
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="lastName">Nom</Label>
-                            <Input id="lastName" name="prenom" placeholder="Dupont" className="border-[#e6d7c3] focus-visible:ring-[#b38c3d]" />
+                            <Input id="lastName" name="prenom" placeholder="Dupont" />
                         </div>
                     </div>
 
@@ -88,7 +84,7 @@ export function RegisterForm() {
                             name="email"
                             type="email"
                             placeholder="exemple@email.com"
-                            className="border-[#e6d7c3] focus-visible:ring-[#b38c3d]"
+                        
                         />
                     </div>
 
@@ -100,13 +96,13 @@ export function RegisterForm() {
                                 type={showPassword ? "text" : "password"}
                                 name="password"
                                 placeholder="••••••••"
-                                className={"border-[#e6d7c3] focus-visible:ring-[#b38c3d]" + (errorCode == "PASSWORD_TOO_SHORT" ? "border-4 border-red-500" : "")}
+                                className={`${errorCode === "PASSWORD_TOO_SHORT" ? "border-2 border-red-500" : ""}`}
                             />
                             <Button
                                 type="button"
                                 variant="ghost"
                                 size="icon"
-                                className={"absolute right-2 top-1/2 h-7 w-7 -translate-y-1/2 text-gray-500"}
+                                className="absolute right-2 top-1/2 h-7 w-7 -translate-y-1/2 text-rose-900"
                                 onClick={() => setShowPassword(!showPassword)}
                             >
                                 {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -125,13 +121,13 @@ export function RegisterForm() {
                                 name="confirmPassword"
                                 type={showConfirmPassword ? "text" : "password"}
                                 placeholder="••••••••"
-                                className={"border-[#e6d7c3] focus-visible:ring-[#b38c3d]" + (errorCode == "PASSWORD_TOO_SHORT" ? "border-4 border-red-500" : "")}
+                                className={`${errorCode === "PASSWORD_TOO_SHORT" ? "border-2 border-red-500" : ""}`}
                             />
                             <Button
                                 type="button"
                                 variant="ghost"
                                 size="icon"
-                                className="absolute right-2 top-1/2 h-7 w-7 -translate-y-1/2 text-gray-500"
+                                className="absolute right-2 top-1/2 h-7 w-7 -translate-y-1/2 text-rose-900"
                                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                             >
                                 {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -145,7 +141,6 @@ export function RegisterForm() {
                                     {errorMessage}
                                 </p>
                             )}
-
                         </div>
                     </div>
 
@@ -153,44 +148,32 @@ export function RegisterForm() {
                         <Checkbox id="terms" />
                         <Label htmlFor="terms" className="text-xs font-normal">
                             J&apos;accepte les{" "}
-                            <Link href="/terms" className="text-[#b38c3d] hover:underline">
+                            <Link href="/terms" className="text-rose-900 hover:underline">
                                 conditions d&apos;utilisation
                             </Link>{" "}
                             et la{" "}
-                            <Link href="/privacy" className="text-[#b38c3d] hover:underline">
+                            <Link href="/privacy" className="text-rose-900 hover:underline">
                                 politique de confidentialité
                             </Link>
                         </Label>
                     </div>
 
-                    <Button type="submit" className="w-full bg-[#b38c3d] hover:bg-[#9a7834] text-white">
-                        {isLoading ?
-                            (
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-
-                            ) :
-                            (
-                                <>
-                                    S&apos;inscrire
-
-                                </>
-
-                            )
-
-                        }
-
-
-
+                    <Button type="submit" className="w-full bg-button hover:bg-rose-900 cursor-pointer text-white">
+                        {isLoading ? (
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : (
+                            <>S&apos;inscrire</>
+                        )}
                     </Button>
                 </form>
 
                 <div className="mt-4 text-center text-sm">
-                    Vous avez déjà un compte?{" "}
-                    <Link href="/login" className="text-[#b38c3d] hover:underline">
+                    Vous avez déjà un compte ?{" "}
+                    <Link href="/auth/login" className="text-rose-700 hover:underline">
                         Se connecter
                     </Link>
                 </div>
             </div>
         </div>
-    )
+    );
 }

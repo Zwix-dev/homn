@@ -13,9 +13,8 @@ export const auth = betterAuth({
         enabled: true,
         requireEmailVerification: false,
         sendResetPassword: async ({ user, url, token }, request) => {
-            // Vous avez déjà l'URL finale dans la variable `url` !
-            // Ou si votre fonction a besoin du token, utilisez `token`.
-            await sendResetPassLink(user.email, token);
+            console.log(token, url, user.email);
+            await sendResetPassLink(user.email, url, token);
         },
     },
     user: {

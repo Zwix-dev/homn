@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Homn",
-  description: "HOMN - Boutique de vêtements",
+  title: "Belles Femmes",
+  description: "Belles Femmes - Boutique de vêtements",
   icons: {
     icon: "@/public/icon.jpg",
     shortcut: "/favicon.ico",

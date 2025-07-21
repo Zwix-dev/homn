@@ -11,6 +11,7 @@ export interface Product {
   isNew: boolean;
   createdAt?: Date;
   updatedAt?: Date;
+  // shop: 'shop1' | 'shop2'; // Indique la boutique à laquelle le produit appartient
 }
 
 export interface CartItem extends Product {
