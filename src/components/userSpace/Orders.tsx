@@ -27,15 +27,14 @@ export default function Orders({ orders }: OrdersProps) {
       currency: "EUR",
     }).format(price);
 
+    console.log(orders)
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case "pending":
         return "bg-yellow-100 text-yellow-800";
-      case "confirmed":
-        return "bg-blue-100 text-blue-800";
-      case "shipped":
+      case "en route":
         return "bg-purple-100 text-purple-800";
-      case "delivered":
+      case "livrée":
         return "bg-green-100 text-green-800";
       case "cancelled":
         return "bg-red-100 text-red-800";
@@ -66,6 +65,8 @@ export default function Orders({ orders }: OrdersProps) {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Articles</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Suivi</th>
+
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -166,6 +167,15 @@ export default function Orders({ orders }: OrdersProps) {
                           )}
                         </DialogContent>
                       </Dialog>
+                    </td>
+                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {order.trackingNumber ? (
+                        <a className="text-blue-600 hover:underline cursor-pointer" href={`https://www.laposte.fr/outils/suivre-vos-envois?code=${order.trackingNumber}`} target="_blank" rel="noopener noreferrer">
+                          Suivre
+                        </a>
+                      ) : (
+                        <span className="text-gray-400">Pas de suivi disponible</span>
+                      )}
                     </td>
                   </tr>
                 ))}

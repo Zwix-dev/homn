@@ -4,7 +4,7 @@ import Sidebar from '@/components/userSpace/Sidebar';
 import { getAllCategories, getProducts, getWishlistProducts } from '@/data/products';
 import { auth } from "@/lib/auth";
 import { headers } from 'next/headers';
-import { getOrders } from '@/data/order';
+import { getAllOrders, getOrders } from '@/data/order';
 
 export default async function Page() {
   const session = await auth.api.getSession({
@@ -21,17 +21,19 @@ export default async function Page() {
     orderHistory,
     allProducts,
     categories,
+    allOrders
 
   ] = await Promise.all([
     getWishlistProducts(userId),
     getOrders(userId),
     getProducts(),
     getAllCategories(),
+    getAllOrders(),
     session?.user.id ? getWishlistProducts(session.user.id) : Promise.resolve([])
   ]);
 
   return (
-    <Sidebar wishlist={wishlistProducts} orderHistory={orderHistory} productsPage={allProducts} categories={categories} />
+    <Sidebar wishlist={wishlistProducts} orderHistory={orderHistory} productsPage={allProducts} categories={categories} customersOrders={allOrders}/>
   );
 }
 

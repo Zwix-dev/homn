@@ -1,5 +1,5 @@
 "use client"
-import { User, ShoppingBag, Heart, CreditCard, MapPin, SettingsIcon, LogOut, ChevronRight, X, Store } from "lucide-react"
+import { User, ShoppingBag, Heart, CreditCard, MapPin, SettingsIcon, LogOut, ChevronRight, X, Store, Package } from "lucide-react"
 import type React from "react"
 
 import { useEffect, useState } from "react"
@@ -7,6 +7,7 @@ import type { UserInterface, Product, Category } from "@/types"
 import { authClient } from "@/lib/auth-client"
 import PersonalInfo from "./Personnal-infos"
 import Orders from "./Orders"
+import ManageOrders from "./ManageOrders"
 import Wishlist from "./Wishlist"
 import PaymentMethods from "./Payement-methods"
 import Addresses from "./Adresses"
@@ -19,6 +20,7 @@ interface SidebarProps {
   orderHistory: Order[]
   productsPage: Product[];
   categories: Category[];
+  customersOrders: Order[];
 }
 const sidebarItems = [
   { id: "personal-info", name: "Informations personnelles", icon: User },
@@ -27,9 +29,10 @@ const sidebarItems = [
   // { id: "payment-methods", name: "Moyens de paiement", icon: CreditCard },
   // { id: "addresses", name: "Adresses", icon: MapPin },
   { id: "settings", name: "Paramètres", icon: SettingsIcon },
+
 ]
 
-export default function Sidebar({ wishlist, orderHistory,productsPage,categories}: SidebarProps) {
+export default function Sidebar({ wishlist, orderHistory, productsPage, categories,customersOrders }: SidebarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [activeSection, setActiveSection] = useState("personal-info")
   const { data: session, isPending, error, refetch } = authClient.useSession()
@@ -87,7 +90,9 @@ export default function Sidebar({ wishlist, orderHistory,productsPage,categories
       case "settings":
         return <Settings />
       case "produts":
-        return <Products productsPa={productsPage} categories={categories}/>
+        return <Products productsPa={productsPage} categories={categories} />
+      case "omanageOrders":
+        return <ManageOrders orders={customersOrders} />
 
       default:
         return (
@@ -148,22 +153,36 @@ export default function Sidebar({ wishlist, orderHistory,productsPage,categories
 
               localUser?.role === "admin" &&
               (
-                <button
+                <>
 
-                  className={`flex items-center w-full px-4 py-3 text-left rounded-lg ${activeSection === "produts"
-                    ? "bg-button text-white"
-                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                    }`}
-                  onClick={() => setActiveSection("produts")}
-                >
-                  <Store className="mr-3 h-5 w-5" />
-                  <span className="flex-1">{"Produits"}</span>
-                  <ChevronRight className="h-4 w-4" />
-                </button>
+                  <button
 
+                    className={`flex items-center w-full px-4 py-3 text-left rounded-lg ${activeSection === "produts"
+                      ? "bg-button text-white"
+                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                      }`}
+                    onClick={() => setActiveSection("produts")}
+                  >
+                    <Store className="mr-3 h-5 w-5" />
+                    <span className="flex-1">{"Produits"}</span>
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+
+
+                  <button
+
+                    className={`flex items-center w-full px-4 py-3 text-left rounded-lg ${activeSection === "omanageOrders"
+                      ? "bg-button text-white"
+                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                      }`}
+                    onClick={() => setActiveSection("omanageOrders")}
+                  >
+                    <Package className="mr-3 h-5 w-5" />
+                    <span className="flex-1">{"Commandes"}</span>
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+                </>
               )
-
-
             }
 
 

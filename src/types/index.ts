@@ -70,6 +70,7 @@ export interface Order {
   addressId: number;
   totalPrice: number;    // Dans Prisma c'est un Float
   status: string;
+  trackingNumber:  string | null; 
   createdAt: Date;
   updatedAt: Date;
   shippingAddress: Address;
